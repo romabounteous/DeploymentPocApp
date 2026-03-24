@@ -1,0 +1,31 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+
+    - name: Zip Artifact
+      run: |
+        cd publish
+        zip -r app.zip .
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: app
+        path: publish/app.zip
